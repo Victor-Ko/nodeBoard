@@ -1,0 +1,24 @@
+{
+  "name": "nodeBoard",
+  "version": "1.0.0",
+  "description": "nodeBoard",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Victor-Ko/nodeBoard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Victor-Ko/nodeBoard/issues"
+  },
+  "homepage": "https://github.com/Victor-Ko/nodeBoard#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  }
+}
