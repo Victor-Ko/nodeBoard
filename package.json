@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/Victor-Ko/nodeBoard#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "ejs": "^2.6.1",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.5.8"
   }
 }

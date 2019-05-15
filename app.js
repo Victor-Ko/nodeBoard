@@ -1,35 +1,43 @@
-var express = require('express');
-var path = require('path');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const methodOverride = require('method-override');
 
-var app = express();
+const app = express();
 
+// Other settings
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(methodOverride("_method"));
 
+// Port setting
 app.listen(3000, () =>{
     console.log('server on!');
 });
 
-const data = {count: 0};
-
-app.get('/', (req,res) => {
-    data.count++;
-    res.render('my_first_ejs', data);
+//DB Connection
+/*
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://admin:admin@nodeboard-dgy1u.mongodb.net/test?retryWrites=true";
+const client = new MongoClient(uri, { useNewUrlParser: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+*/
+mongoose.connect("mongodb+srv://admin:admin@nodeboard-dgy1u.mongodb.net/test?retryWrites=true", {useNewUrlParser:true});
+const db = mongoose.connection;
+db.once("open", () => {
+    console.log('DB Connect');
+});
+db.on('error', () => {
+    console.log('DB Error : ', err);
 });
 
-app.get('/reset', (req,res) => {
-    data.count = 0;
-    res.render('my_first_ejs', data);
-});
-
-app.get('/set/count', (req,res) => {
-    if(req.query.count){
-        data.count = req.query.count;
-    }
-    res.render('my_first_ejs', data);
-});
-
-app.get('/set/:num', (req,res) => {
-    data.count = req.params.num;
-    res.render('my_first_ejs', data);
-});
+// Routes
+app.use("/", require("./routes/home"));
+app.use("/contacts", require("./routes/contacts"));
