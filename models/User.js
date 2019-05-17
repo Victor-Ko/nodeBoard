@@ -36,37 +36,46 @@ userSchema.virtual("newPassword").get(() => {
     this._newPassword=value; 
 });
 
+const User = mongoose.model("user",userSchema);
+
 // password validation
-userSchema.path("password").validate((v) => {
-    console.log(this);
-    console.log(this.isNew);
+userSchema.path("password").validate((pw) => {
+    const userInfo = this;
+    User.find({ password : pw }, (err, rs) => {
+        if (err){ return res(err); }
+        if (!rs.length){
+            // create user
+            if(!userInfo._passwordConfirmation){
+                userInfo.invalidate("passwordConfirmation", "Password Confirmation is required!");
+            }
+            if(pw !== userInfo._passwordConfirmation) {
+                userInfo.invalidate("passwordConfirmation", "Password Confirmation does not matched!");
+            }
+        }else{      
+            // update user           
+            if(!userInfo._currentPassword){
+                userInfo.invalidate("currentPassword", "Current Password is required!");
+            }
+            if(userInfo._currentPassword && !bcrypt.compareSync(user._currentPassword, user._originalPassword)){
+                userInfo.invalidate("currentPassword", "Current Password is invalid!");
+            }
+            if(userInfo._newPassword !== userInfo._passwordConfirmation) {
+                userInfo.invalidate("passwordConfirmation", "Password Confirmation does not matched!");
+            }
+        }
+    });
 
-    // create user
+    /*
     if(this.isNew){
-        if(!this._passwordConfirmation){
-            this.invalidate("passwordConfirmation", "Password Confirmation is required!");
-        }
-        if(user._password !== user._passwordConfirmation) {
-            this.invalidate("passwordConfirmation", "Password Confirmation does not matched!");
-        }
+        
     }
-
-    // update user 
     if(!this.isNew){
-        if(!this._currentPassword){
-            this.invalidate("currentPassword", "Current Password is required!");
-        }
-        if(this._currentPassword && this._currentPassword != this._originalPassword){
-            this.invalidate("currentPassword", "Current Password is invalid!");
-        }
-        if(this._newPassword !== this._passwordConfirmation) {
-            this.invalidate("passwordConfirmation", "Password Confirmation does not matched!");
-        }
+        
     }
+    */
 });
 
 // hash password
-/*
 userSchema.pre("save", function (next){
     let user = this;
     if(!user.isModified("password")){
@@ -76,7 +85,7 @@ userSchema.pre("save", function (next){
         return next();
     }
 });
-*/
+
 // model methods 
 userSchema.methods.authenticate = function (password) {
     let user = this;
@@ -84,5 +93,4 @@ userSchema.methods.authenticate = function (password) {
 };
 
 // model & export
-const User = mongoose.model("user",userSchema);
 module.exports = User;
