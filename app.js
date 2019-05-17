@@ -42,5 +42,6 @@ db.on('error', () => {
 app.use("/", require("./routes/home"));
 app.use("/contacts", require("./routes/contacts"));
 app.use("/posts", require("./routes/posts"));
+app.use("/users", require("./routes/users"));
 
 //https://www.a-mean-blog.com/
