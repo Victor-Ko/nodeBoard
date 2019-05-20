@@ -3,6 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
+const flash = require("connect-flash");
+const session = require("express-session");
+const passport   = require("./config/passport");
 
 const app = express();
 
@@ -12,6 +15,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
+app.use(flash());
+app.use(session({secret:"MySecret", resave:true, saveUninitialized:true}));
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session()); 
 
 // Port setting
 app.listen(3000, () =>{
@@ -36,6 +45,13 @@ db.once("open", () => {
 });
 db.on('error', () => {
     console.log('DB Error : ', err);
+});
+
+// Custom Middlewares
+app.use((req,res,next) => {
+    res.locals.isAuthenticated = req.isAuthenticated();
+    res.locals.currentUser = req.user;
+    next();
 });
 
 // Routes
