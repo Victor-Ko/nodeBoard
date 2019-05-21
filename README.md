@@ -14,6 +14,7 @@ Clone the repository and run `npm install`
 ```
 git clone https://github.com/Victor-Ko/nodeBoard.git
 npm install
+```
 
 ## Starting the server
 
