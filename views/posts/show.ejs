@@ -9,19 +9,22 @@
     <% include ./partials/header %>
         <div class="buttons">
             <a class="btn btn-default" href="/posts">Back</a>
+            <% if(isAuthenticated && currentUser.id == post.author.id){ %>
             <a class="btn btn-default" href="/posts/<%= post._id %>/edit">Edit</a>
             <form action="/posts/<%= post._id %>?_method=delete" method="post">
-                <a class="btn btn-default" href="#" onclick="confirm('Do you want to delete this?')?this.parentElement.submit():null;">Delete</a>
+            <a class="btn btn-default" href="#" onclick="confirm('Do you want to delete this?')?this.parentElement.submit():null;">Delete</a>
             </form>
+            <% } %>
         </div>
         <div class="contentBox">
             <h3 class="contentBoxTop"><%= post.title %></h3>
             <div class="row">
                 <div class="col-sm-4 col-sm-push-8">
                     <div class="post-info">
-                        <div><span>Created</span> : <%= post.createdDate %> <%= post.createdTime %></div>
+                        <div><span>Author</span> : <%= post.author ? post.author.username : "" %></div>
+                        <div><span>Created</span> : <%= post.createdDate %></div>
                         <% if(post.updatedAt) { %>
-                        <div><span>Updated</span> : <%= post.updatedDate %> <%= post.updatedTime %></div>
+                        <div><span>Updated</span> : <%= post.updatedDate %></div>
                         <% } %>
                     </div> <!-- post-info end -->
                 </div> <!-- col end-->

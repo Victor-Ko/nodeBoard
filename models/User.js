@@ -30,22 +30,22 @@ const userSchema = mongoose.Schema({
     toObject:{virtuals:true}
 });
 
-// virtuals
+// virtuals arrow function 사용불가
 userSchema.virtual("passwordConfirmation")
-.get(() => { return this._passwordConfirmation; })
-.set((value) => { this._passwordConfirmation=value; });
+.get(function() { return this._passwordConfirmation; })
+.set(function(value) { this._passwordConfirmation=value; });
 
 userSchema.virtual("originalPassword")
-.get(() => { return this._originalPassword; })
-.set((value) => { this._originalPassword=value; });
+.get(function() { return this._originalPassword; })
+.set(function(value) { this._originalPassword=value; });
 
 userSchema.virtual("currentPassword")
-.get(() => { return this._currentPassword; })
-.set((value) => { this._currentPassword=value; });
+.get(function() { return this._currentPassword; })
+.set(function(value) { this._currentPassword=value; });
 
 userSchema.virtual("newPassword")
-.get(() => { return this._newPassword; })
-.set((value) => { this._newPassword=value; });
+.get(function() { return this._newPassword; })
+.set(function(value) { this._newPassword=value; });
 
 // password validation
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;

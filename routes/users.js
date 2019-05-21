@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const User  = require("../models/User");
+const util  = require("../util");
 
 // Index
-router.get("/", function(req, res){
+router.get("/", util.isLoggedin, function(req, res){
     User.find({}).sort({username:1}).exec((err, users) => {
         if(err){ return res.json(err); }
         res.render("users/index", {users:users});
@@ -22,7 +23,7 @@ router.post("/", (req, res) => {
     User.create(req.body, (err) => {
         if(err){  
             req.flash("user", req.body);
-            req.flash("errors", parseError(err));
+            req.flash("errors", util.parseError(err));
             return res.redirect("/users/new");
         }
         res.redirect("/users");
@@ -30,7 +31,7 @@ router.post("/", (req, res) => {
 });
 
 // show
-router.get("/:username", (req, res) => {
+router.get("/:username", util.isLoggedin, (req, res) => {
     User.findOne({username:req.params.username}, (err, user) => {
         if(err){ return res.json(err); }
         res.render("users/show", {user:user});
@@ -38,7 +39,7 @@ router.get("/:username", (req, res) => {
 });
 
 // edit
-router.get("/:username/edit", (req, res) => {
+router.get("/:username/edit", util.isLoggedin, checkPermission, (req, res) => {
     const user = req.flash("user")[0];
     const errors = req.flash("errors")[0] || {};
     if(!user){
@@ -52,7 +53,7 @@ router.get("/:username/edit", (req, res) => {
 });
 
 // update
-router.put("/:username",(req, res, next)=> {
+router.put("/:username", util.isLoggedin, checkPermission, (req, res, next)=> {
     User.findOne({username:req.params.username}).select({password:1}).exec((err, user) => {
         if(err){ return res.json(err); }
         // update user object
@@ -65,7 +66,7 @@ router.put("/:username",(req, res, next)=> {
         user.save((err, user) => {
             if(err){
                 req.flash("user", req.body);
-                req.flash("errors", parseError(err));
+                req.flash("errors", util.parseError(err));
                 return res.redirect("/users/"+req.params.username+"/edit");
             }
             res.redirect("/users/"+req.params.username);
@@ -75,18 +76,10 @@ router.put("/:username",(req, res, next)=> {
 
 module.exports = router;
 
-// Functions
-function parseError(errors){
-    let parsed = {};
-    if(errors.name == 'ValidationError'){
-        for(let name in errors.errors){
-            let validationError = errors.errors[name];
-            parsed[name] = { message:validationError.message };
-        }
-    }else if(errors.code == "11000" && errors.errmsg.indexOf("username") > 0) {
-        parsed.username = { message:"This username already exists!" };
-    }else{
-        parsed.unhandled = JSON.stringify(errors);
-    }
-    return parsed;
+function checkPermission(req, res, next){
+    User.findOne({username:req.params.username}, function(err, user){
+        if(err){ return res.json(err); }
+        if(user.id != req.user.id){ return util.noPermission(req, res); }
+        next();
+    });
 }
