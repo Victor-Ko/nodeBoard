@@ -6,6 +6,7 @@ const methodOverride = require('method-override');
 const flash = require("connect-flash");
 const session = require("express-session");
 const passport   = require("./config/passport");
+const helmet = require('helmet');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
 app.use(flash());
 app.use(session({secret:"MySecret", resave:true, saveUninitialized:true}));
+app.use(helmet());
 
 // Passport
 app.use(passport.initialize());
