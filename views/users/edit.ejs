@@ -10,6 +10,7 @@
             <a class="btn btn-default" href="/users/<%= username %>">Back</a>
         </div>
         <form class="user-form form-horizontal" action="/users/<%= username %>?_method=put" method="post">
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
             <div class="contentBox">
                 <h3 class="contentBoxTop">Edit User</h3>
                 <fieldset>

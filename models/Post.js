@@ -5,14 +5,15 @@ const util  = require("../util");
 const postSchema = mongoose.Schema({ 
     title:{type:String, required:[true,"Title is required!"]},
     body:{type:String, required:[true,"Body is required!"]},
-    author:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true},
+    author:{type:mongoose.Schema.Types.ObjectId, ref:"user", required:true}, //FK설정
     createdAt:{type:Date, default:Date.now},
     updatedAt:{type:Date},
 },{
     toObject:{virtuals:true} 
 });
 
-// virtuals
+// virtuals은 실제 DB에 저장되진 않지만 model에서는 db에 있는 다른 항목들과 동일하게 사용
+// virtuals Arrow Function 적용안됨
 postSchema.virtual("createdDate").get(function() {
     return util.getDate(this.createdAt);
 });

@@ -8,12 +8,12 @@ const userSchema = mongoose.Schema({
         required:[true,"Username is required!"],
         match:[/^.{4,12}$/,"Should be 4-12 characters!"],
         trim:true,
-        unique:true
+        unique:true //PK설정
     },
     password:{
         type:String,
         required:[true,"Password is required!"],
-        select:false
+        select:false //기본조회 방어
     },
     name:{
         type:String,
@@ -70,7 +70,7 @@ userSchema.path("password").validate((pw) => {
         if(!user.currentPassword){
         user.invalidate("currentPassword", "Current Password is required!");
         }
-        if(user.currentPassword && !bcrypt.compareSync(user.currentPassword, user.originalPassword)){ // 2
+        if(user.currentPassword && !bcrypt.compareSync(user.currentPassword, user.originalPassword)){
         user.invalidate("currentPassword", "Current Password is invalid!");
         }
         if(user.newPassword !== user.passwordConfirmation) {
@@ -80,6 +80,7 @@ userSchema.path("password").validate((pw) => {
 });
 
 // hash password
+// Schema.pre 함수는 첫번째 파라미터로 설정된 event가 일어나기 전(pre)에 먼저 callback 함수를 실행
 userSchema.pre("save", (next) => {
     const user = this;
     if(!user.isModified("password")){

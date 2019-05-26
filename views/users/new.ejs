@@ -7,6 +7,7 @@
 <% include ../partials/nav %>
     <div class="container user user-new">
         <form class="user-form form-horizontal" action="/users" method="post">
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
             <div class="contentBox">
                 <h3 class="contentBoxTop">New User</h3>
                 <fieldset>
