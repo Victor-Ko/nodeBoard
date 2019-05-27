@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(methodOverride("_method"));
-// flash 초기화 합니다. req.flash라는 함수를 사용가능
+// flash 초기화. req.flash라는 함수를 사용가능
 app.use(flash());
 // session은 서버에서 접속자를 구분시키는 역할
 app.use(session({secret:"MySecret", resave:true, saveUninitialized:true}));
